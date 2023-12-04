@@ -59,11 +59,7 @@ public class Scratchcards {
                 if (cardNum > numberOfCards) {
                     break;
                 }
-                if (numOfCards.get(cardNum) != null) {
-                    numOfCards.put(cardNum, numOfCards.get(cardNum) + loopForNumOfCards);
-                } else {
-                    numOfCards.put(cardNum, loopForNumOfCards);
-                }
+                numOfCards.merge(cardNum, loopForNumOfCards, Integer::sum);
             }
         }
         return sumOfCards(numOfCards);
