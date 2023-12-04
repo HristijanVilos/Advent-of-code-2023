@@ -54,18 +54,15 @@ public class Scratchcards {
             int numberOfWinningNumbers = getNumberOfWinningNumbers(card);
             numOfCards.merge(cardNum, 1, Integer::sum);
             int loopForNumOfCards = numOfCards.get(cardNum);
-            for (int k = 0; k < loopForNumOfCards; k++ ) {
-                Integer newCardNum = cardNum;
-                for (int i = 1; i <= numberOfWinningNumbers; i++) {
-                    newCardNum += 1;
-                    if (newCardNum > numberOfCards) {
-                        break;
-                    }
-                    if (numOfCards.get(newCardNum) != null) {
-                        numOfCards.put(newCardNum, numOfCards.get(newCardNum) + 1);
-                    } else {
-                        numOfCards.put(newCardNum, 1);
-                    }
+            for (int i = 1; i <= numberOfWinningNumbers; i++) {
+                cardNum += 1;
+                if (cardNum > numberOfCards) {
+                    break;
+                }
+                if (numOfCards.get(cardNum) != null) {
+                    numOfCards.put(cardNum, numOfCards.get(cardNum) + loopForNumOfCards);
+                } else {
+                    numOfCards.put(cardNum, loopForNumOfCards);
                 }
             }
         }
