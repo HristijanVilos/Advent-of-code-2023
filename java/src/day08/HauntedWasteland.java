@@ -45,23 +45,21 @@ public class HauntedWasteland {
 
     private static long findCycle(List<String> positions, Map<String, Long> seen, Integer dirSize) {
         Map<String, Long> cycle = new HashMap<>();
-        for (int i = 0; i < positions.size(); i++) {
-            List<String> instruction = instructions.get(positions.get(i));
+        for (String position : positions) {
+            List<String> instruction = instructions.get(position);
             long result = 0;
-            while (seen.get(positions.get(i)) == null || seen.get(positions.get(i)) != result % dirSize) {
-                if (positions.get(i).endsWith("Z"))
-                    seen.put(positions.get(i), result % dirSize);
+            while (seen.get(position) == null || seen.get(position) != result % dirSize) {
                 if (directions.get((int) (result % dirSize)).equals("L")) {
-                    positions.set(i, instruction.get(0));
+                    position = instruction.get(0);
                 } else {
-                    positions.set(i, instruction.get(1));
+                    position = instruction.get(1);
                 }
                 result += 1;
-                if (positions.get(i).endsWith("Z"))
-                    seen.put(positions.get(i), result % dirSize);
-                instruction = instructions.get(positions.get(i));
+                if (position.endsWith("Z"))
+                    seen.put(position, result % dirSize);
+                instruction = instructions.get(position);
             }
-            cycle.put(positions.get(i), result);
+            cycle.put(position, result);
         }
         Long finalRes = 1L;
         for (Long value : cycle.values()) {
