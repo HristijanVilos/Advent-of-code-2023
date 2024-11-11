@@ -1,3 +1,5 @@
 .idea
 java/java.iml
 out
+type-script/node_modules
+type-script/package-lock.json
