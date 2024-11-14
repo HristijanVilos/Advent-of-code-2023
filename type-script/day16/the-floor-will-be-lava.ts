@@ -30,7 +30,9 @@ function part1(startingPos: Position, startDir: DirectionType): number {
         }
 
         seen.add(posDir);
-        moveBeam(queue, tileEnergized, pos, dir);
+        tileEnergized.add(pos);
+
+        moveBeam(queue, pos, dir);
     }
 
     return tileEnergized.size - 1;
@@ -51,8 +53,7 @@ function part2(): number {
 }
 
 
-function moveBeam(queue: Array<[Position, DirectionType]>, tileEnergized: PositionSet, pos: Position, dir: DirectionType): void {
-    tileEnergized.add(pos);
+function moveBeam(queue: Array<[Position, DirectionType]>, pos: Position, dir: DirectionType): void {
     const x: number = pos.i + dir[0];
     const y: number = pos.j + dir[1];
 
