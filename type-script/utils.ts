@@ -2,6 +2,15 @@ export function isCharNumeric(char: string) {
     return char.length === 1 && char >= '0' && char <= '9';
 }
 
+export const DIRECTION = {
+    EAST: [0, 1] as const,
+    WEST: [0, -1] as const,
+    SOUTH: [1, 0] as const,
+    NORTH: [-1, 0] as const,
+};
+
+export type DirectionType = typeof DIRECTION[keyof typeof DIRECTION];
+
 export class Position {
     i: number;
     j: number;
@@ -31,35 +40,153 @@ export class Position {
     }
 }
 
-export class PositionSet {
-    private map: Map<string, Position> = new Map();
+interface Hashable {
+    hashCode(): string;
+}
 
-    add(position: Position): void {
-        const hash: string = position.hashCode();
+export class CustomSet<T extends Hashable> {
+    private map: Map<string, T> = new Map();
 
-        if (!this.map.has(hash) || this.map.get(hash)?.equals(position) === false) {
-            this.map.set(hash, position);
+    add(item: T): void {
+        const hash = item.hashCode();
+        if (!this.map.has(hash)) {
+            this.map.set(hash, item);
         }
     }
 
-    has(position: Position): boolean {
-        const storedPositon: Position | undefined = this.map.get(position.hashCode());
-        return storedPositon !== undefined && storedPositon.equals(position);
+    has(item: T): boolean {
+        const hash = item.hashCode();
+        return this.map.has(hash);
     }
 
-    delete(position: Position): boolean {
-        return this.map.delete(position.hashCode());
+    delete(item: T): boolean {
+        const hash = item.hashCode();
+        return this.map.delete(hash);
+
     }
 
     get size(): number {
         return this.map.size;
     }
 
-    get(position: Position): Position | undefined {
-        return this.map.get(position.hashCode());
+    get(item: T): T | undefined {
+        return this.map.get(item.hashCode());
     }
 
-    [Symbol.iterator](): Iterator<Position> {
+    [Symbol.iterator](): Iterator<T> {
         return this.map.values();
+    }
+}
+
+interface ValueOf {
+    getValue(): number;
+}
+
+
+export class MinHeap<T extends ValueOf> {
+    public length: number;
+    public data: T[];
+
+    constructor() {
+        this.length = 0;
+        this.data = [];
+    }
+
+
+    insert(item: T): void {
+        this.data.push(item);
+        this.length++;
+        this.heapifyUp(this.length - 1);
+        
+    }
+
+
+    pop(): T | null {
+        if (this.length === 0) {
+            return null;
+        }
+
+        const out: T = this.data[0];
+        this.length--;
+
+        if (this.length === 0) {
+            this.data = [];
+            return out;
+        }
+
+        this.data[0] = this.data.pop()!;
+        this.heapifyDown(0);
+        return out;
+    }
+
+
+    private heapifyDown(idx: number): void {
+        const lIdx: number = this.getLeftChildId(idx);
+        const rIdx: number = this.getRightChildId(idx);
+
+        if (lIdx >= this.length) {
+            return;
+        }
+
+        const left: T = this.data[lIdx];
+        const leftValue: number = left.getValue();
+
+        let smallestIdx: number = lIdx;
+        let smallest: T = left;
+        let smallestValue: number = leftValue;
+
+        if (rIdx < this.length) {
+            const right: T = this.data[rIdx];
+            const rightValue: number = right.getValue();
+
+            if (rightValue < smallestValue) {
+                smallestIdx = rIdx;
+                smallest = right;
+                smallestValue = rightValue;
+            }
+        }
+
+        const current: T = this.data[idx];
+        const currentValue: number = current.getValue();
+
+        if (currentValue > smallestValue) {
+            this.data[smallestIdx] = current;
+            this.data[idx] = smallest;
+            this.heapifyDown(smallestIdx);
+        }
+    }
+
+
+
+    private heapifyUp(idx: number): void {
+        if (idx === 0) {
+            return;
+        }
+
+        const pIdx: number = this.getParrentId(idx);
+        // parrent
+        const parent: T = this.data[pIdx];
+        const parentValue: number = parent.getValue();
+        // current
+        const current: T = this.data[idx];
+        const currentValue: number = current.getValue();
+
+        if (parentValue > currentValue) {
+            this.data[pIdx] = current;
+            this.data[idx] = parent;
+            return this.heapifyUp(pIdx);
+        }
+    }
+
+    private getLeftChildId(idx: number): number {
+        return (idx * 2) + 1;
+    }
+
+    private getRightChildId(idx: number): number {
+        return (idx * 2) + 2;
+    }
+
+    private getParrentId(idx: number): number {
+        return Math.floor((idx - 1) / 2);
     }
 }

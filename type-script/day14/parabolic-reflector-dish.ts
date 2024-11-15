@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { Position, PositionSet } from "../utils";
+import { Position, CustomSet } from "../utils";
 
 const f: string = fs.readFileSync("../inputs/day14/input.txt", { encoding: "utf-8" });
 const map: string[][] = f.trim().split("\n").map(x => x.trim().split(""));
@@ -7,7 +7,7 @@ const map: string[][] = f.trim().split("\n").map(x => x.trim().split(""));
 function part1(map: string[][]): number {
     const maxLength: number = map.length;
     const mapWidth: number = map[0].length;
-    const [circleRocksPosition, cubeRockPosition]: [PositionSet, PositionSet] = setRocks(map);
+    const [circleRocksPosition, cubeRockPosition]: [CustomSet<Position>, CustomSet<Position>] = setRocks(map);
     cycleNorth(circleRocksPosition, cubeRockPosition, maxLength, mapWidth);
     return calculateLoadOnNBeam(circleRocksPosition, maxLength);
 }
@@ -15,7 +15,7 @@ function part1(map: string[][]): number {
 function part2(map: string[][]): number {
     const maxLength: number = map.length;
     const mapWidth: number = map[0].length;
-    const [circleRocksPosition, cubeRockPosition]: [PositionSet, PositionSet] = setRocks(map);
+    const [circleRocksPosition, cubeRockPosition]: [CustomSet<Position>, CustomSet<Position>] = setRocks(map);
     const seen: Map<string, number> = new Map();
     for (let i = 0; i < 1_000_000_000; i++) {
         cycleNorth(circleRocksPosition, cubeRockPosition, maxLength, mapWidth);
@@ -34,7 +34,7 @@ function part2(map: string[][]): number {
     return calculateLoadOnNBeam(circleRocksPosition, maxLength);
 }
 
-function calculateLoadOnNBeam(circleRocksPosition: PositionSet, maxLength: number): number {
+function calculateLoadOnNBeam(circleRocksPosition: CustomSet<Position>, maxLength: number): number {
     let result: number = 0;
     for (let rock of circleRocksPosition) {
         result += (maxLength - rock.i)
@@ -42,7 +42,7 @@ function calculateLoadOnNBeam(circleRocksPosition: PositionSet, maxLength: numbe
     return result
 }
 
-function cycleNorth(circleRocksPosition: PositionSet, cubeRockPosition: PositionSet, maxLength: number, maxWidth: number): void {
+function cycleNorth(circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>, maxLength: number, maxWidth: number): void {
     for (let i = 1; i < maxLength; i++) {
         for (let j = 0; j < maxWidth; j++) {
             moveNorthIfPossible(i, j, circleRocksPosition, cubeRockPosition);
@@ -50,7 +50,7 @@ function cycleNorth(circleRocksPosition: PositionSet, cubeRockPosition: Position
     }
 }
 
-function moveNorthIfPossible(i: number, j: number, circleRocksPosition: PositionSet, cubeRockPosition: PositionSet): void {
+function moveNorthIfPossible(i: number, j: number, circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>): void {
     const checkRock: Position = new Position(i, j);
     if (circleRocksPosition.has(checkRock)) {
         let idx = i;
@@ -69,7 +69,7 @@ function moveNorthIfPossible(i: number, j: number, circleRocksPosition: Position
     }
 }
 
-function cycleWest(circleRocksPosition: PositionSet, cubeRockPosition: PositionSet, maxLength: number, maxWidth: number): void {
+function cycleWest(circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>, maxLength: number, maxWidth: number): void {
     for (let i = 0; i < maxLength; i++) {
         for (let j = 0; j < maxWidth; j++) {
             moveWestIfPossible(i, j, circleRocksPosition, cubeRockPosition);
@@ -77,7 +77,7 @@ function cycleWest(circleRocksPosition: PositionSet, cubeRockPosition: PositionS
     }
 }
 
-function moveWestIfPossible(i: number, j: number, circleRocksPosition: PositionSet, cubeRockPosition: PositionSet): void {
+function moveWestIfPossible(i: number, j: number, circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>): void {
     const checkRock: Position = new Position(i, j);
     if (circleRocksPosition.has(checkRock)) {
         let idx = j;
@@ -96,7 +96,7 @@ function moveWestIfPossible(i: number, j: number, circleRocksPosition: PositionS
     }
 }
 
-function cycleSouth(circleRocksPosition: PositionSet, cubeRockPosition: PositionSet, maxLength: number, maxWidth: number): void {
+function cycleSouth(circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>, maxLength: number, maxWidth: number): void {
     for (let i = maxLength - 1; i >= 0; i--) {
         for (let j = 0; j < maxWidth; j++) {
             moveSoutIfPossible(i, j, circleRocksPosition, maxLength, cubeRockPosition);
@@ -104,7 +104,7 @@ function cycleSouth(circleRocksPosition: PositionSet, cubeRockPosition: Position
     }
 }
 
-function moveSoutIfPossible(i: number, j: number, circleRocksPosition: PositionSet, maxLength: number, cubeRockPosition: PositionSet): void {
+function moveSoutIfPossible(i: number, j: number, circleRocksPosition: CustomSet<Position>, maxLength: number, cubeRockPosition: CustomSet<Position>): void {
     const checkRock: Position = new Position(i, j);
     if (circleRocksPosition.has(checkRock)) {
         let idx = i;
@@ -123,7 +123,7 @@ function moveSoutIfPossible(i: number, j: number, circleRocksPosition: PositionS
     }
 }
 
-function cycleEast(circleRocksPosition: PositionSet, cubeRockPosition: PositionSet, maxLength: number, maxWidth: number): void {
+function cycleEast(circleRocksPosition: CustomSet<Position>, cubeRockPosition: CustomSet<Position>, maxLength: number, maxWidth: number): void {
     for (let i = 0; i < maxLength; i++) {
         for (let j = maxWidth - 1; j >= 0; j--) {
             moveEastIfPossible(i, j, circleRocksPosition, maxWidth, cubeRockPosition);
@@ -131,7 +131,7 @@ function cycleEast(circleRocksPosition: PositionSet, cubeRockPosition: PositionS
     }
 }
 
-function moveEastIfPossible(i: number, j: number, circleRocksPosition: PositionSet, maxWidth: number, cubeRockPosition: PositionSet): void {
+function moveEastIfPossible(i: number, j: number, circleRocksPosition: CustomSet<Position>, maxWidth: number, cubeRockPosition: CustomSet<Position>): void {
     const checkRock: Position = new Position(i, j);
     if (circleRocksPosition.has(checkRock)) {
         let idx = j;
@@ -150,9 +150,9 @@ function moveEastIfPossible(i: number, j: number, circleRocksPosition: PositionS
     }
 }
 
-function setRocks(map: string[][]): [PositionSet, PositionSet] {
-    const circleRocksPosition: PositionSet = new PositionSet();
-    const cubeRockPosition: PositionSet = new PositionSet();
+function setRocks(map: string[][]): [CustomSet<Position>, CustomSet<Position>] {
+    const circleRocksPosition: CustomSet<Position> = new CustomSet<Position>();
+    const cubeRockPosition: CustomSet<Position> = new CustomSet<Position>();
     for (let i = 0; i < map.length; i++) {
         for (let j = 0; j < map[i].length; j++) {
             if (map[i][j] === 'O') {
