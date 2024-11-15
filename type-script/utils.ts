@@ -79,7 +79,7 @@ export class CustomSet<T extends Hashable> {
 }
 
 interface ValueOf {
-    getValue(): number;
+    valueOf(): number;
 }
 
 
@@ -129,7 +129,7 @@ export class MinHeap<T extends ValueOf> {
         }
 
         const left: T = this.data[lIdx];
-        const leftValue: number = left.getValue();
+        const leftValue: number = left.valueOf();
 
         let smallestIdx: number = lIdx;
         let smallest: T = left;
@@ -137,7 +137,7 @@ export class MinHeap<T extends ValueOf> {
 
         if (rIdx < this.length) {
             const right: T = this.data[rIdx];
-            const rightValue: number = right.getValue();
+            const rightValue: number = right.valueOf();
 
             if (rightValue < smallestValue) {
                 smallestIdx = rIdx;
@@ -147,7 +147,7 @@ export class MinHeap<T extends ValueOf> {
         }
 
         const current: T = this.data[idx];
-        const currentValue: number = current.getValue();
+        const currentValue: number = current.valueOf();
 
         if (currentValue > smallestValue) {
             this.data[smallestIdx] = current;
@@ -166,10 +166,10 @@ export class MinHeap<T extends ValueOf> {
         const pIdx: number = this.getParrentId(idx);
         // parrent
         const parent: T = this.data[pIdx];
-        const parentValue: number = parent.getValue();
+        const parentValue: number = parent.valueOf();
         // current
         const current: T = this.data[idx];
-        const currentValue: number = current.getValue();
+        const currentValue: number = current.valueOf();
 
         if (parentValue > currentValue) {
             this.data[pIdx] = current;

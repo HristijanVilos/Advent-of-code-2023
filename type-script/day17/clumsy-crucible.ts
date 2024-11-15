@@ -38,6 +38,7 @@ function solution(input: number[][], minSteps: number, maxSteps: number): number
     return -1;
 }
 
+
 function exitPoint(tuple: Tuple, maxHeight: number, maxWidth: number, minSteps: number): boolean {
     return (tuple.point.i === maxHeight - 1 && tuple.point.j === maxWidth - 1) && (tuple.movmentInOneDir >= minSteps);
 }
@@ -105,7 +106,7 @@ class Tuple {
         return this.distance - other.distance;
     }
 
-    getValue(): number {
+    valueOf(): number {
         return this.distance;
     }
 }
